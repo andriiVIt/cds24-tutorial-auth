@@ -1,12 +1,14 @@
 using DataAccess;
 using DataAccess.Entities;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service;
 using Service.Blog;
 using Service.Draft;
 using Service.Repositories;
+using Service.Security;
 
 namespace Api;
 
@@ -37,7 +39,12 @@ public class Program
         builder.Services.AddScoped<IRepository<Comment>, CommentRepository>();
         #endregion
 
-        #region Security
+        #region  
+        builder
+            .Services.AddIdentityApiEndpoints<User>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>();
+        builder.Services.AddSingleton<IPasswordHasher<User>, Argon2idPasswordHasher<User>>();
         #endregion
 
         #region Services
@@ -114,7 +121,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.MapIdentityApi<User>();
         app.MapControllers();
 
         app.Run();
