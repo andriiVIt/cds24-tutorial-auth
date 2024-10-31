@@ -121,7 +121,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-        app.MapIdentityApi<User>();
+        // app.MapIdentityApi<User>();
         app.MapControllers();
 
         app.Run();
